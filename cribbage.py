@@ -30,14 +30,30 @@ position = ['Pone', 'Dealer']
 isHeroDealer = True
  
 def printHand(handName, hand):
-  handTemplate = '{0} (value: {1})'
+  handTemplate = '{0} value: {1}'
   scoringHand = CribbageHand(cards=hand)
-  score = scoringHand.score()
+  
+  if hand.size < 6:
+    scoreFlush = scoringHand.score_flush()
+  else:
+    scoreFlush = 0
+  
+  printedScore = handTemplate.format(handName, str(scoringHand.score()))
+  scoreTemplate = '15\'s: {0} Pairs: {1} Runs: {2} Flush: {3} Knobs: {4}'
+  printedCount = scoreTemplate.format(str(scoringHand.score_fifteens()), 
+                                      str(scoringHand.score_pairs()),
+                                      str(scoringHand.score_runs()),
+                                      str(scoreFlush),
+                                      str(scoringHand.score_knobs()))
+
   print()
-  print(handTemplate.format(handName, str(score)))
-  print('-' * len(handTemplate.format(handName, str(score))))
+  print(printedScore)
+  print('-' * len(printedCount))
   print(hand)
- 
+  print()
+  print(printedCount)
+  print('-' * len(printedCount))
+
 # Deal out the player hands, sort them and initialize an empty crib, cut and board
 heroHand = deck.deal(6)
 enemyHand = deck.deal(6)
