@@ -30,14 +30,15 @@ position = ['Pone', 'Dealer']
 isHeroDealer = True
  
 def printHand(handName, hand):
-  handTemplate = '{0} value: {1}'
-  scoringHand = CribbageHand(cards=hand)
+  cards = ' '.join([card.abbrev for card in hand]) 
   
+  scoringHand = CribbageHand(cards=hand)
   if hand.size < 6:
     scoreFlush = scoringHand.score_flush()
   else:
     scoreFlush = 0
   
+  handTemplate = '{0} value: {1}'
   printedScore = handTemplate.format(handName, str(scoringHand.score()))
   scoreTemplate = '15\'s: {0} Pairs: {1} Runs: {2} Flush: {3} Knobs: {4}'
   printedCount = scoreTemplate.format(str(scoringHand.score_fifteens()), 
@@ -48,11 +49,10 @@ def printHand(handName, hand):
 
   print()
   print(printedScore)
-  print('-' * len(printedCount))
-  print(hand)
+  print('-' * len(printedScore))
+  print(cards)
   print()
   print(printedCount)
-  print('-' * len(printedCount))
 
 # Deal out the player hands, sort them and initialize an empty crib, cut and board
 heroHand = deck.deal(6)
@@ -69,11 +69,11 @@ enemyPosition = position[int(not(isHeroDealer))]
 print('You are the %s' % heroPosition)
 printHand('%s\'s hand' % heroPosition, heroHand)
  
-chuck = input('\nName the cards to throw in the crib. (separate them with a comma) \n').split(',', 1)
- 
-for card in chuck:
-  crib.add(heroHand.get(card.strip()))
- 
+chuck = input('\nWhich cards do you want to discard to the crib?.\n(Enter 1-6 order of the card in the list separated with spaces.)\n').split()
+chuck = [int(i)-1 for i in chuck]
+
+crib.add(heroHand.get_list(chuck))
+
 printHand('%s\'s hand' % heroPosition, heroHand)
  
 # Enemy discards into the crib
