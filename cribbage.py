@@ -1,6 +1,9 @@
 import pydealer
+import itertools
+from cribbageHand import CribbageHand
 
 # Define a cribbage rank dictionary
+
 cribbage_ranks = {
   "values": {
     "King":  10,
@@ -18,45 +21,51 @@ cribbage_ranks = {
     "Ace": 1
   }
 }
-
-deck = pydealer.Deck(ranks=cribbage_ranks) 
+ 
+deck = pydealer.Deck(ranks=cribbage_ranks)
 deck.shuffle()
-
+ 
+# Define a list of player positions and seed the isHeroDealer
+position = ['Pone', 'Dealer']
+isHeroDealer = True
+ 
 def printHand(handName, hand):
   handTemplate = '{0} (value: {1})'
-  score = scoreHand(hand)
+  scoringHand = CribbageHand(cards=hand)
+  score = scoringHand.score()
   print()
   print(handTemplate.format(handName, str(score)))
   print('-' * len(handTemplate.format(handName, str(score))))
   print(hand)
-
-def scoreHand(hand):
-  return 19
-
+ 
+# Deal out the player hands, sort them and initialize an empty crib, cut and board
 heroHand = deck.deal(6)
 enemyHand = deck.deal(6)
-crib = pydealer.Stack()
 heroHand.sort()
 enemyHand.sort()
+crib = pydealer.Stack()
+table = pydealer.Stack()
 
-position = ['Pone', 'Dealer']
-isDealer = True
-heroPosition = position[int(isDealer)]
-enemyPosition = position[int(not(isDealer))]
-
+heroPosition = position[int(isHeroDealer)]
+enemyPosition = position[int(not(isHeroDealer))]
+ 
+# Hero discards into the crib
 print('You are the %s' % heroPosition)
 printHand('%s\'s hand' % heroPosition, heroHand)
-
-chuck = input('Name the cards to throw in the crib. (separate them with a comma) \n').split(',', 1)
-
+ 
+chuck = input('\nName the cards to throw in the crib. (separate them with a comma) \n').split(',', 1)
+ 
 for card in chuck:
-  crib.add(heroHand.get(card.strip())) 
-
-crib.sort()
-
+  crib.add(heroHand.get(card.strip()))
+ 
 printHand('%s\'s hand' % heroPosition, heroHand)
-
-printHand('Crib', crib)
-
+ 
+# Enemy discards into the crib
+crib.add(enemyHand.deal(2))
+ 
 printHand('%s\'s hand' % enemyPosition, enemyHand)
-
+printHand('Crib', crib)
+ 
+# Cut for deal
+cut = deck.deal(1)
+print('\nDealer cuts a ' + str(cut[0]))
