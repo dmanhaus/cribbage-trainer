@@ -107,11 +107,14 @@ class CribbageHand(pydealer.stack.Stack):
         return 0
  
     def score_flush(self):
-        test_suit = self._cards[3].suit
-        for card in self._cards[:3]:
-            if card.suit != test_suit:
-                return 0
-        if len(self._cards) == 5:
-            if self._cards[4].suit == test_suit:
-                return 5
-        return 4
+        if len(self.cards) < 4:
+            return 0
+        else:
+            test_suit = self._cards[3].suit
+            for card in self._cards[:3]:
+                if card.suit != test_suit:
+                    return 0
+            if len(self._cards) == 5:
+                if self._cards[4].suit == test_suit:
+                    return 5
+            return 4
