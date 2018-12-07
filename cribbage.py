@@ -1,7 +1,17 @@
 import pydealer
 import itertools
 from cribbageHand import CribbageHand
- 
+import argparse
+
+ap = argparse.ArgumentParser()
+ap.add_argument('-e', '--enemy', required=False, help='Show the enemy hand during play')
+ap.add_argument('-c', '--crib', required=False, help='Show the crib during play')
+ap.add_argument('-a', '--autoplay', required=False, help='Computer plays against itself')
+ap.add_argument('-s', '--strategy', required=False, help='Specifies the strategy used by the enemy. ' +
+                                                         'In autoplay mode, add a comma and specify the strategy used by the hero')
+args = vars(ap.parse_args())
+print(args)
+
 # Define a cribbage rank dictionary
  
 cribbage_ranks = {
@@ -88,7 +98,6 @@ def playCard(cardTerm, hand, table):
     hand.sort(cribbage_ranks)
     return False
   else:
-    newCount = sumHandValue(table)
     action = 'Played {0} {1}'
     print(action.format(cardTerm, ''))
     return True
