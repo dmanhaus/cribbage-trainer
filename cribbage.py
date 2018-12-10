@@ -3,12 +3,11 @@ import itertools
 from cribbageHand import CribbageHand
 import argparse
 
-ap = argparse.ArgumentParser()
-ap.add_argument('-e', '--enemy', required=False, help='Show the enemy hand during play')
-ap.add_argument('-c', '--crib', required=False, help='Show the crib during play')
-ap.add_argument('-a', '--autoplay', required=False, help='Computer plays against itself')
-ap.add_argument('-s', '--strategy', required=False, help='Specifies the strategy used by the enemy. ' +
-                                                         'In autoplay mode, add a comma and specify the strategy used by the hero')
+ap = argparse.ArgumentParser(description='Play cribbage, or learn how to play better from a self-learning opponent.')
+ap.add_argument('-sh', '--show', required=False, help='level of detail to show during play\n0 = Just the cards & the count\n1 = player score\n2 = crib\n3 = everything')
+ap.add_argument('-a', '--autoplay', required=False, action="store_true", help='Computer plays against itself')
+ap.add_argument('-s', '--strategy', required=False, help='Specifies the strategy used by the enemy in standard play, and the hero in autoplay mode (comma-separated).')
+                                                         
 args = vars(ap.parse_args())
 print(args)
 
