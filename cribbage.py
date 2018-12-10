@@ -3,10 +3,24 @@ import itertools
 from cribbageHand import CribbageHand
 import argparse
 
-ap = argparse.ArgumentParser(description='Play cribbage, or learn how to play better from a self-learning opponent.')
-ap.add_argument('-sh', '--show', required=False, help='level of detail to show during play\n0 = Just the cards & the count\n1 = player score\n2 = crib\n3 = everything')
-ap.add_argument('-a', '--autoplay', required=False, action="store_true", help='Computer plays against itself')
-ap.add_argument('-s', '--strategy', required=False, help='Specifies the strategy used by the enemy in standard play, and the hero in autoplay mode (comma-separated).')
+ap = argparse.ArgumentParser(description='Play cribbage against, or learn how to play from a self-learning opponent.', formatter_class=argparse.RawTextHelpFormatter)
+ap.add_argument('-sh'
+              , '--show'
+              , required=False
+              , help='level of detail to show during play\n ' 
+                  + '0 = Show only the player cards & the count\n ' 
+                  + '1 = Show the player hand score before and after discard\n '
+                  + '2 = Show the crib after discard\n ' 
+                  + '3 = Show everything, including the enemy hand after discard and during play', type=int)
+ap.add_argument('-a'
+              , '--autoplay'
+              , required=False
+              , action="store_true"
+              , help='Computer plays against itself')
+ap.add_argument('-s'
+              , '--strategy'
+              , required=False
+              , help='Specifies the strategy used by the enemy in standard play, and the hero in autoplay mode (comma-separated).')
                                                          
 args = vars(ap.parse_args())
 print(args)
