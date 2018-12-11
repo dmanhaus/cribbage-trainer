@@ -11,12 +11,15 @@ ap.add_argument('-sh'
                   + '0 = Show only the player cards & the count\n ' 
                   + '1 = Show the player hand score before and after discard\n '
                   + '2 = Show the crib after discard\n ' 
-                  + '3 = Show everything, including the enemy hand after discard and during play', type=int)
+                  + '3 = Show everything, including the enemy hand after discard and during play'
+              , type=int
+              , default=0)
 ap.add_argument('-a'
               , '--autoplay'
               , required=False
-              , action="store_true"
-              , help='Computer plays against itself')
+              , help='Computer plays against itself [n] times'
+              , type=int
+              , default=0)
 ap.add_argument('-s'
               , '--strategy'
               , required=False
@@ -24,6 +27,9 @@ ap.add_argument('-s'
                                                          
 args = vars(ap.parse_args())
 print(args)
+showValue = args["show"]>0
+showCrib = args["show"]>=2
+showEnemyHand = args["show"]==3
 
 # Define a cribbage rank dictionary
  
@@ -53,10 +59,10 @@ cut = pydealer.Stack()
 position = ['Pone', 'Dealer']
 isHeroDealer = True
 
-def printHand(handName, hand, showValue=True):
+def printHand(handName, hand, showValue=True, addCut=False):
   global cut
  
-  if cut.size == 1 and showValue:
+  if addCut and cut.size == 1:
     cutTerm = cut[0].abbrev
     hand.add(cut.get(cutTerm))
  
@@ -84,7 +90,7 @@ def printHand(handName, hand, showValue=True):
   for i in range(2,hand.size+1):
     indexString = indexString + ' %s  ' % str(i)
  
-  if hand.size == 5:
+  if addCut and hand.size == 5:
     indexString = indexString.replace('5', 'Cut')
     cut.add(hand.get(cutTerm))
  
@@ -111,8 +117,9 @@ def playCard(cardTerm, hand, table):
     hand.sort(cribbage_ranks)
     return False
   else:
+    # TODO: Score the Table
     action = 'Played {0} {1}'
-    print(action.format(cardTerm, ''))
+    print(action.format(cardTerm, '\n'))
     return True
  
 # Deal out the player hands, sort them and initialize an empty crib, cut and board
@@ -128,7 +135,7 @@ enemyPosition = position[int(not(isHeroDealer))]
 
 # Hero discards into the crib
 print('You are the %s' % heroPosition + '\n')
-printHand('%s\'s hand' % heroPosition, heroHand, False)
+printHand('%s\'s hand' % heroPosition, heroHand, showValue)
 
 chuck = input('\nWhich cards do you want to discard to the crib?.\n(Enter two numbers from 1-6 above the cards in the list, separated with a space.)\n').split()
 chuck = [int(i)-1 for i in chuck]
@@ -146,9 +153,11 @@ enemyScoreTerm = ' '.join([card.abbrev.rjust(3) for card in enemyHand])
 # Cut for deal
 cut = deck.deal(1)
 print('Dealer cuts a ' + str(cut[0]) + '\n')
-printHand('%s\'s hand' % heroPosition, heroHand)
-printHand('%s\'s hand' % enemyPosition, enemyHand)
-printHand('Crib', crib)
+printHand('%s\'s hand' % heroPosition, heroHand, showValue, True)
+if showEnemyHand:
+  printHand('%s\'s hand' % enemyPosition, enemyHand, showValue, True)
+if showCrib:
+  printHand('Crib', crib, showValue)
  
 isHeroTurn = not(isHeroDealer)
 go = 0
@@ -156,16 +165,20 @@ go = 0
 # Play for points
 while sumHandValue(table) < 31 and (heroHand.size > 0 or enemyHand.size > 0):
   newCount = sumHandValue(table)
-  countTemplate = '{0}\'s turn. The count is {1}.\n'
+  countTemplate = '{0}\'s turn. The Count is {1}'
   cardPlayed = False
  
   if isHeroTurn:
     while not cardPlayed:
-      print(countTemplate.format(heroPosition, str(sumHandValue(table))))
+      if table.size > 0:
+        printHand(countTemplate.format(heroPosition, str(sumHandValue(table))), table, False)
+      else:
+        print('%s\'s turn.' % heroPosition)
       printHand('%s\'s hand' % heroPosition, heroHand, showValue=False)
       cardIndex = int(input('Enter the card to play or 0 for "Go": ')) - 1
       if cardIndex == -1:
         go += 1
+        print('Go: %s\n' % go)
         continue
       cardTerm = heroHand[cardIndex].abbrev
       cardPlayed = playCard(cardTerm, heroHand, table)
@@ -174,8 +187,13 @@ while sumHandValue(table) < 31 and (heroHand.size > 0 or enemyHand.size > 0):
     # TODO: Implement enemy card selection
     cardIndex = 0
     while not cardPlayed and cardIndex + 1 != enemyHand.size:
-      print(countTemplate.format(enemyPosition, str(sumHandValue(table))))
-      printHand('%s\'s hand' % enemyPosition, enemyHand, showValue=False)
+      if table.size > 0:
+        printHand(countTemplate.format(enemyPosition, str(sumHandValue(table))), table, False)
+      else: 
+        print('%s\'s turn.' % enemyPosition)
+      if showEnemyHand:
+        printHand('%s\'s hand' % enemyPosition, enemyHand, showValue)
+      
       # Pick a card from the enemy deck
       cardTerm = enemyHand[cardIndex].abbrev
       cardPlayed = playCard(cardTerm, enemyHand, table)
@@ -183,8 +201,10 @@ while sumHandValue(table) < 31 and (heroHand.size > 0 or enemyHand.size > 0):
         cardIndex += 1
         if cardIndex == enemyHand.size:
           go += 1
+          print('Go: %s\n' % go)
     table.add(enemyHand.get(cardTerm))
   isHeroTurn = not isHeroTurn
   # TODO: Fix go condition testing for enemy turn
   if go == 2:
     table.empty(return_cards=False)
+    go = 0
