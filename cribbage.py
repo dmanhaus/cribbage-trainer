@@ -51,6 +51,16 @@ cribbage_ranks = {
   }
 }
 
+# Define a cribbage board
+cribbage_board = {
+  "hero": {
+    "peg" : [0,0]
+  },
+  "enemy": {
+    "peg" : [0,0]
+  }
+}
+
 deck = pydealer.Deck(ranks=cribbage_ranks)
 deck.shuffle()
 cut = pydealer.Stack()
@@ -163,7 +173,7 @@ isHeroTurn = not(isHeroDealer)
 go = 0
  
 # Play for points
-while sumHandValue(table) < 31 and (heroHand.size > 0 or enemyHand.size > 0):
+while sumHandValue(table) < 31 and go < 2 and (heroHand.size > 0 or enemyHand.size > 0):
   newCount = sumHandValue(table)
   countTemplate = '{0}\'s turn. The Count is {1}'
   cardPlayed = False
@@ -206,5 +216,7 @@ while sumHandValue(table) < 31 and (heroHand.size > 0 or enemyHand.size > 0):
   isHeroTurn = not isHeroTurn
   # TODO: Fix go condition testing for enemy turn
   if go == 2:
+    print('Start next count.')
     table.empty(return_cards=False)
     go = 0
+
