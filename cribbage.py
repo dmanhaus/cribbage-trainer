@@ -27,9 +27,9 @@ ap.add_argument('-s'
                                                          
 args = vars(ap.parse_args())
 print(args)
-showValue = args["show"]>0
-showCrib = args["show"]>=2
-showEnemyHand = args["show"]==3
+show_value = args["show"]>0
+show_crib = args["show"]>=2
+show_enemy_hand = args["show"]==3
 
 # Define a cribbage rank dictionary
  
@@ -65,155 +65,155 @@ deck = pydealer.Deck(ranks=cribbage_ranks)
 deck.shuffle()
 cut = pydealer.Stack()
  
-# Define a list of player positions and seed the isHeroDealer
+# Define a list of player positions and seed the is_hero_dealer
 position = ['Pone', 'Dealer']
-isHeroDealer = True
+is_hero_dealer = True
 
-def printHand(handName, hand, showValue=True, addCut=False):
+def print_hand(hand_name, hand, show_value=True, add_cut=False):
   global cut
  
-  if addCut and cut.size == 1:
-    cutTerm = cut[0].abbrev
-    hand.add(cut.get(cutTerm))
+  if add_cut and cut.size == 1:
+    cut_term = cut[0].abbrev
+    hand.add(cut.get(cut_term))
  
-  scoreHand = CribbageHand(cards=hand)
-  handTemplate = '{0} value: {1}'
+  score_hand = CribbageHand(cards=hand)
+  hand_template = '{0} value: {1}'
   cards = ' '.join([card.abbrev.rjust(3) for card in hand])
  
-  if showValue:
-    if scoreHand.size < 6:
-      scoreFlush = scoreHand.score_flush()
+  if show_value:
+    if score_hand.size < 6:
+      score_flush = score_hand.score_flush()
     else:
-      scoreFlush = 0
+      score_flush = 0
  
-    printedScore = handTemplate.format(handName, str(scoreHand.score()))
-    scoreTemplate = '15\'s: {0} Pairs: {1} Runs: {2} Flush: {3} Knobs: {4}'
-    printedCount = scoreTemplate.format(str(scoreHand.score_fifteens()),
-                                        str(scoreHand.score_pairs()),
-                                        str(scoreHand.score_runs()),
-                                        str(scoreFlush),
-                                        str(scoreHand.score_knobs()))
+    printed_score = hand_template.format(hand_name, str(score_hand.score()))
+    score_template = '15\'s: {0} Pairs: {1} Runs: {2} Flush: {3} Knobs: {4}'
+    printed_count = score_template.format(str(score_hand.score_fifteens()),
+                                          str(score_hand.score_pairs()),
+                                          str(score_hand.score_runs()),
+                                          str(score_flush),
+                                          str(score_hand.score_knobs()))
   else:
-    printedScore = handName
+    printed_score = hand_name
  
-  indexString = ' 1  '
+  index_string = ' 1  '
   for i in range(2,hand.size+1):
-    indexString = indexString + ' %s  ' % str(i)
+    index_string = index_string + ' %s  ' % str(i)
  
-  if addCut and hand.size == 5:
-    indexString = indexString.replace('5', 'Cut')
-    cut.add(hand.get(cutTerm))
+  if add_cut and hand.size == 5:
+    index_string = index_string.replace('5', 'Cut')
+    cut.add(hand.get(cut_term))
  
-  print(printedScore + '\n')
-  print(indexString)
-  print('-' * len(indexString))
+  print(printed_score + '\n')
+  print(index_string)
+  print('-' * len(index_string))
   print(cards)
-  print('-' * len(indexString))
-  if showValue:
-    print(printedCount + '\n')
+  print('-' * len(index_string))
+  if show_value:
+    print(printed_count + '\n')
  
-def sumHandValue(hand):
+def sum_hand_value(hand):
   hand = CribbageHand(cards = hand)
   count = 0
   for card in hand:
     count = count + card.count_value
   return count
  
-def playCard(cardTerm, hand, table):
-  table.add(hand.get(cardTerm))
-  if sumHandValue(table) > 31:
+def play_card(card_term, hand, table):
+  table.add(hand.get(card_term))
+  if sum_hand_value(table) > 31:
     print('That card is too big to play. Try again.')
-    hand.add(table.get(cardTerm))
+    hand.add(table.get(card_term))
     hand.sort(cribbage_ranks)
     return False
   else:
     # TODO: Score the Table
     action = 'Played {0} {1}'
-    print(action.format(cardTerm, '\n'))
+    print(action.format(card_term, '\n'))
     return True
  
 # Deal out the player hands, sort them and initialize an empty crib, cut and board
-heroHand = cards=deck.deal(6)
-enemyHand = cards=deck.deal(6)
-heroHand.sort(cribbage_ranks)
-enemyHand.sort(cribbage_ranks)
+hero_hand = cards=deck.deal(6)
+enemy_hand = cards=deck.deal(6)
+hero_hand.sort(cribbage_ranks)
+enemy_hand.sort(cribbage_ranks)
 crib = pydealer.Stack()
 table = cards=pydealer.Stack()
 
-heroPosition = position[int(isHeroDealer)]
-enemyPosition = position[int(not(isHeroDealer))]
+hero_position = position[int(is_hero_dealer)]
+enemy_position = position[int(not(is_hero_dealer))]
 
 # Hero discards into the crib
-print('You are the %s' % heroPosition + '\n')
-printHand('%s\'s hand' % heroPosition, heroHand, showValue)
+print('You are the %s' % hero_position + '\n')
+print_hand('%s\'s hand' % hero_position, hero_hand, show_value)
 
 chuck = input('\nWhich cards do you want to discard to the crib?.\n(Enter two numbers from 1-6 above the cards in the list, separated with a space.)\n').split()
 chuck = [int(i)-1 for i in chuck]
  
-crib.add(heroHand.get_list(chuck))
+crib.add(hero_hand.get_list(chuck))
  
 # Enemy discards into the crib
-enemyHand.shuffle()             # shuffle the hand so the discard is random
-crib.add(enemyHand.deal(2))
-enemyHand.sort(cribbage_ranks)  # sort the hand so it displays correctly
+enemy_hand.shuffle()             # shuffle the hand so the discard is random
+crib.add(enemy_hand.deal(2))
+enemy_hand.sort(cribbage_ranks)  # sort the hand so it displays correctly
  
-heroScoreTerm = ' '.join([card.abbrev.rjust(3) for card in heroHand])
-enemyScoreTerm = ' '.join([card.abbrev.rjust(3) for card in enemyHand])
+hero_score_term = ' '.join([card.abbrev.rjust(3) for card in hero_hand])
+enemy_score_term = ' '.join([card.abbrev.rjust(3) for card in enemy_hand])
  
 # Cut for deal
 cut = deck.deal(1)
 print('Dealer cuts a ' + str(cut[0]) + '\n')
-printHand('%s\'s hand' % heroPosition, heroHand, showValue, True)
-if showEnemyHand:
-  printHand('%s\'s hand' % enemyPosition, enemyHand, showValue, True)
-if showCrib:
-  printHand('Crib', crib, showValue)
+print_hand('%s\'s hand' % hero_position, hero_hand, show_value, True)
+if show_enemy_hand:
+  print_hand('%s\'s hand' % enemy_position, enemy_hand, show_value, True)
+if show_crib:
+  print_hand('Crib', crib, show_value)
  
-isHeroTurn = not(isHeroDealer)
+is_hero_turn = not(is_hero_dealer)
 go = 0
  
 # Play for points
-while sumHandValue(table) < 31 and go < 2 and (heroHand.size > 0 or enemyHand.size > 0):
-  newCount = sumHandValue(table)
-  countTemplate = '{0}\'s turn. The Count is {1}'
-  cardPlayed = False
+while sum_hand_value(table) < 31 and go < 2 and (hero_hand.size > 0 or enemy_hand.size > 0):
+  new_count = sum_hand_value(table)
+  count_template = '{0}\'s turn. The Count is {1}'
+  card_played = False
  
-  if isHeroTurn:
-    while not cardPlayed:
+  if is_hero_turn:
+    while not card_played:
       if table.size > 0:
-        printHand(countTemplate.format(heroPosition, str(sumHandValue(table))), table, False)
+        print_hand(count_template.format(hero_position, str(sum_hand_value(table))), table, False)
       else:
-        print('%s\'s turn.' % heroPosition)
-      printHand('%s\'s hand' % heroPosition, heroHand, showValue=False)
-      cardIndex = int(input('Enter the card to play or 0 for "Go": ')) - 1
-      if cardIndex == -1:
+        print('%s\'s turn.' % hero_position)
+      print_hand('%s\'s hand' % hero_position, hero_hand, show_value=False)
+      card_index = int(input('Enter the card to play or 0 for "Go": ')) - 1
+      if card_index == -1:
         go += 1
         print('Go: %s\n' % go)
         continue
-      cardTerm = heroHand[cardIndex].abbrev
-      cardPlayed = playCard(cardTerm, heroHand, table)
-    table.add(heroHand.get(cardTerm))
+      card_term = hero_hand[card_index].abbrev
+      card_played = play_card(card_term, hero_hand, table)
+    table.add(hero_hand.get(card_term))
   else:
     # TODO: Implement enemy card selection
-    cardIndex = 0
-    while not cardPlayed and cardIndex + 1 != enemyHand.size:
+    card_index = 0
+    while not card_played and card_index + 1 != enemy_hand.size:
       if table.size > 0:
-        printHand(countTemplate.format(enemyPosition, str(sumHandValue(table))), table, False)
+        print_hand(count_template.format(enemy_position, str(sum_hand_value(table))), table, False)
       else: 
-        print('%s\'s turn.' % enemyPosition)
-      if showEnemyHand:
-        printHand('%s\'s hand' % enemyPosition, enemyHand, showValue)
+        print('%s\'s turn.' % enemy_position)
+      if show_enemy_hand:
+        print_hand('%s\'s hand' % enemy_position, enemy_hand, show_value)
       
       # Pick a card from the enemy deck
-      cardTerm = enemyHand[cardIndex].abbrev
-      cardPlayed = playCard(cardTerm, enemyHand, table)
-      if not cardPlayed:
-        cardIndex += 1
-        if cardIndex == enemyHand.size:
+      card_term = enemy_hand[card_index].abbrev
+      card_played = play_card(card_term, enemy_hand, table)
+      if not card_played:
+        card_index += 1
+        if card_index == enemy_hand.size:
           go += 1
           print('Go: %s\n' % go)
-    table.add(enemyHand.get(cardTerm))
-  isHeroTurn = not isHeroTurn
+    table.add(enemy_hand.get(card_term))
+  is_hero_turn = not is_hero_turn
   # TODO: Fix go condition testing for enemy turn
   if go == 2:
     print('Start next count.')
