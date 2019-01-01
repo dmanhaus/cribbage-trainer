@@ -44,7 +44,7 @@ Be the first player to score 121 points
 ### Scoring Points
 **Points Earned**
 | Cards | During Play | In Hand or Crib |
-| :---- | :---------- | :-------------- |
+|:------|:------------|:----------------|
 | Jack turned by dealer as starter card	| 2	| - |
 | Jack in hand or crib of same suit as starter card |	-	| 1 |
 | *Combinations*: | | | 	 	 
