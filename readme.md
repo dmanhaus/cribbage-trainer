@@ -2,6 +2,12 @@
 
 **DGA4Lyfe!**
 
+- [cribbage-trainer](#cribbage-trainer)
+  - [Pseudo-coding the rules of play](#pseudo-coding-the-rules-of-play)
+    - [Rule 1.1 Object of the Game](#rule-11-object-of-the-game)
+    - [Rule 1.5 Outline of Playing Sequence](#rule-15-outline-of-playing-sequence)
+    - [Scoring Points](#scoring-points)
+
 ## Pseudo-coding the rules of play
 
 Taken from [The Mechanics of Playing Cribbage (American Cribbage Congress)](http://www.cribbage.org/NewSite/rules/rule1.asp#section5)
